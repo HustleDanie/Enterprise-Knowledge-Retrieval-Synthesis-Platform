@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply transition-colors duration-200;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-gradient-to-br from-brand-50 via-white to-brand-50 text-gray-900;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-brand-600 to-brand-700 bg-clip-text text-transparent;
+}
+
+.glass-effect {
+  @apply backdrop-blur-md bg-white/80 border border-white/20;
+}
+
+.card-shadow {
+  @apply shadow-lg shadow-brand-500/10;
+}

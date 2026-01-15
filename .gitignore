@@ -1,0 +1,104 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+coverage.xml
+*.cover
+.coverage.*
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Chroma
+data/chroma_db/
+chroma_data/
+
+# Logs
+logs/
+*.log
+*.pot
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+postgres_data/
+
+# Data
+data/
+*.csv
+*.parquet
+
+# Docker
+docker_data/
+.dockerignore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Monitoring
+prometheus_data/
+grafana_data/
+
+# Personal files
+VIDEO_SCRIPT.md
+.github/copilot-instructions.md
+rebuild_history.ps1
+SETUP_COMPLETE.md
+FRONTEND_DEVELOPMENT.md
+FRONTEND_QUICKSTART.md

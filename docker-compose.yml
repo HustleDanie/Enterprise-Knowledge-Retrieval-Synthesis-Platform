@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: retrieval_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: retrieval_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  chroma:
+    image: ghcr.io/chroma-core/chroma:latest
+    container_name: retrieval_chroma
+    environment:
+      ALLOW_RESET: "True"
+    ports:
+      - "8001:8000"
+    volumes:
+      - chroma_data:/chroma/data
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    container_name: retrieval_mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow_data:/mlflow
+    command: mlflow server --host 0.0.0.0 --backend-store-uri sqlite:///mlflow/mlflow.db
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: retrieval_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: retrieval_grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: retrieval_app
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/retrieval_db
+      VECTOR_DB_TYPE: chroma
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      LOG_LEVEL: INFO
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      chroma:
+        condition: service_started
+      mlflow:
+        condition: service_started
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: retrieval_frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      BACKEND_URL: http://app:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - app
+
+volumes:
+  postgres_data:
+  chroma_data:
+  mlflow_data:
+  prometheus_data:
+  grafana_data:
